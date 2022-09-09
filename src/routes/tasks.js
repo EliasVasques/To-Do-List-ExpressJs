@@ -12,7 +12,7 @@ const tasks = [
         nome: 'Fazer outra coisa',
         descricao:'Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem.', 
         nivelDificuldade: 4, 
-        nivelPrioridade: 4, 
+        nivelPrioridade: 2, 
     },
     { 
         nome: 'Fazer uma terceira coisa',
@@ -24,27 +24,35 @@ const tasks = [
         nome: 'Almoçar',
         descricao:'Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem.', 
         nivelDificuldade: 5, 
-        nivelPrioridade: 10, 
+        nivelPrioridade: 3, 
     }
 ]
 
 
 router.get('/', (request, response) => {
-    let { nivelDificuldade } = request.query;
-    let { nivelPrioridade } = request.query;
+    const { nivelDificuldade } = request.query;
+    const { nivelPrioridade } = request.query;
+
+    let tasksFiltradas = tasks;
 
     if(nivelDificuldade) {
-        nivelDificuldade = nivelDificuldade.split('-').map((numero) => Number(numero));
+        let arrayNivelDificuldade = nivelDificuldade.split('-').map((numero) => Number(numero));
 
-        const tasksFiltradas = tasks.filter((task) => {
-            return task.nivelDificuldade >= nivelDificuldade[0] && task.nivelDificuldade <= nivelDificuldade[1];
+        tasksFiltradas = tasksFiltradas.filter((task) => {
+            return task.nivelDificuldade >= arrayNivelDificuldade[0] && task.nivelDificuldade <= arrayNivelDificuldade[1];
         });
-        response.send(200, tasksFiltradas);
     }
 
-    
+    if(nivelPrioridade) {
+        let nivelPrioridadeNumber = Number(nivelPrioridade);
+
+        tasksFiltradas = tasksFiltradas.filter((task) => {
+            return task.nivelPrioridade === nivelPrioridadeNumber;
+        });
+    }
+
     // status, data
-    response.send(200, tasks)
+    response.send(200, tasksFiltradas);
 })
 
 

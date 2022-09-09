@@ -29,6 +29,7 @@
             background-color: #eee;
 
             display: flex;
+            justify-content: space-between;
             align-items: center;
         }
 
@@ -100,6 +101,7 @@
     <script>
         let nivelDificuldadeFiltro;
         let nivelPrioridadeFiltro;
+        const urlGet = 'http://localhost:3001/tasks?';
 
         const selecionar = (elemento) => {
             const classeFiltro = elemento.parentNode.parentNode.classList[0];
@@ -114,17 +116,22 @@
         }
 
         const filtrar = () => {
-            let urlGet = 'http://localhost:3001/tasks?';
-            if(nivelDificuldadeFiltro) urlGet += `nivelDificuldade=${nivelDificuldadeFiltro}&`;
-            if(nivelPrioridadeFiltro) urlGet += `nivelPrioridade=${nivelPrioridadeFiltro}&`;
-            console.log(urlGet)
-            renderizarTasks(urlGet)
+
+            let url = urlGet;
+            if(nivelDificuldadeFiltro) url += `nivelDificuldade=${nivelDificuldadeFiltro}&`;
+            if(nivelPrioridadeFiltro) url += `nivelPrioridade=${nivelPrioridadeFiltro}&`;
+            renderizarTasks(url)
             
         }
+        
         const limparFiltros = () => {
             const selecionados = document.querySelectorAll('.selecionado');
-            selecionados[0].classList.remove('selecionado');
-            selecionados[1].classList.remove('selecionado');
+            for(let i=0; i<selecionados.length; i++) {
+                selecionados[i].classList.remove('selecionado');
+            }
+
+            // renderizar sem filtros
+            renderizarTasks( urlGet );
         }
         
         const renderizarTasks = ( url ) => {
@@ -139,7 +146,10 @@
                         divTasks.innerHTML +=  ` 
                             <div class="task">
                                 <div class="nome">${tasks[i].nome}</div>
-                                <div>Nivel de dificuldade: ${tasks[i].nivelDificuldade}</div>
+                                <div>
+                                    Nivel de dificuldade: ${tasks[i].nivelDificuldade} <br>
+                                    Nivel de prioridade: ${tasks[i].nivelPrioridade} <br>
+                                </div>
                             </div>
                         `
                     }
