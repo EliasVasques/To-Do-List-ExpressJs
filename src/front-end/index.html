@@ -14,17 +14,19 @@
             align-items: center;
         }
 
-        input {
+        .add-task {
             display: block;
             margin: auto;
+
+            margin: 30px 0;
         }
 
         .task {
             width: 800px;
             height: 60px;
+            margin: 10px 0;
             padding: 10px;
             background-color: #eee;
-            margin: 10px 0;
 
             display: flex;
             align-items: center;
@@ -35,6 +37,10 @@
             display: flex;
             justify-content: space-between;
         }
+        .filtro h4 {
+            text-align: center;
+        }
+
         .opcoes {
             display: flex;
         }
@@ -64,61 +70,85 @@
 
         <h4>Filtros</h4>
         <div class="filtro">
-            <div class="nivel-dificuldade opcoes">
-                <div onclick="selecionar(this)">1-3</div>
-                <div onclick="selecionar(this)">4-6</div>
-                <div onclick="selecionar(this)">7+</div>
+            <div class="nivel-dificuldade">
+                <h4>Nível de Dificuldade</h4>
+                <div class="opcoes">
+                    <div onclick="selecionar(this)">1-3</div>
+                    <div onclick="selecionar(this)">4-6</div>
+                    <div onclick="selecionar(this)">7-10</div>
+                </div>
             </div>
-            <div class="nivel-prioridade opcoes">
-                <div onclick="selecionar(this)">1</div>
-                <div onclick="selecionar(this)">2</div>
-                <div onclick="selecionar(this)">3</div>
-                <div onclick="selecionar(this)">4</div>
+            <div class="nivel-prioridade">
+                <h4>Nível de Prioridade</h4>
+                <div class="opcoes">
+                    <div onclick="selecionar(this)">1</div>
+                    <div onclick="selecionar(this)">2</div>
+                    <div onclick="selecionar(this)">3</div>
+                    <div onclick="selecionar(this)">4</div>
+                </div>
             </div>
         </div>
-        <!--<button onclick="">Filtrar</button>-->
+        <button onclick="filtrar()">Filtrar</button>
+        <button onclick="limparFiltros()">Limpar Filtros</button>
 
-        <div class="tasks">
-        
-        </div>
+        <input class="add-task" type="text">
+
+        <div class="tasks"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        
+        let nivelDificuldadeFiltro;
+        let nivelPrioridadeFiltro;
+
         const selecionar = (elemento) => {
-            const classePai = elemento.parentNode.classList[0];
-            const anteriorClicado = document.querySelector(`.${classePai} .selecionado`);
-            console.log(anteriorClicado)
+            const classeFiltro = elemento.parentNode.parentNode.classList[0];
+
+            if(classeFiltro === 'nivel-dificuldade') nivelDificuldadeFiltro = elemento.innerHTML;
+            else if(classeFiltro === 'nivel-prioridade') nivelPrioridadeFiltro = elemento.innerHTML;
+
+            const anteriorClicado = document.querySelector(`.${classeFiltro} .selecionado`);
             if(anteriorClicado) anteriorClicado.classList.remove('selecionado');
+
             elemento.classList.add('selecionado');
-
-        }
-        
-        const divTasks = document.querySelector('.tasks');
-
-        const task = { 
-            nome: 'Fazer tal coisa',
-            descricao:'Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem.', 
-            nivelDificuldade: 5, 
-            nivelPrioridade: 1, 
         }
 
-        axios
-        .get(`http://localhost:3001/tasks`)
-        .then((result) => {
-            const tasks = result.data;
-            divTasks.innerHTML = '';
-            for(let i=0; i<tasks.length; i++) {
-                divTasks.innerHTML +=  ` 
-                    <div class="task">
-                        <div class="nome">${tasks[i].nome}</div>
-                    </div>
-                `
-            }
-        })
-
+        const filtrar = () => {
+            let urlGet = 'http://localhost:3001/tasks?';
+            if(nivelDificuldadeFiltro) urlGet += `nivelDificuldade=${nivelDificuldadeFiltro}&`;
+            if(nivelPrioridadeFiltro) urlGet += `nivelPrioridade=${nivelPrioridadeFiltro}&`;
+            console.log(urlGet)
+            renderizarTasks(urlGet)
+            
+        }
+        const limparFiltros = () => {
+            const selecionados = document.querySelectorAll('.selecionado');
+            selecionados[0].classList.remove('selecionado');
+            selecionados[1].classList.remove('selecionado');
+        }
         
+        const renderizarTasks = ( url ) => {
+            axios
+                .get(url)
+                .then((result) => {
+                    const tasks = result.data; 
+                    const divTasks = document.querySelector('.tasks');
+
+                    divTasks.innerHTML = '';
+                    for(let i=0; i<tasks.length; i++) {
+                        divTasks.innerHTML +=  ` 
+                            <div class="task">
+                                <div class="nome">${tasks[i].nome}</div>
+                                <div>Nivel de dificuldade: ${tasks[i].nivelDificuldade}</div>
+                            </div>
+                        `
+                    }
+                })
+        }
+
+        // PRIMEIRA VEZ
+        renderizarTasks('http://localhost:3001/tasks');
+
     </script>
 </body>
 </html>
