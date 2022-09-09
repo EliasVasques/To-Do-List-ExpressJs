@@ -1,6 +1,8 @@
 const { Router, response } = require('express');
 const router = Router();
 
+const addTaskHtml = '/home/eliasvasques/Documents/express/praticando1/src/front-end/addTask.html';
+
 const tasks = [
     { 
         nome: 'Fazer tal coisa',
@@ -55,6 +57,20 @@ router.get('/', (request, response) => {
     response.send(200, tasksFiltradas);
 })
 
+router.get('/addTask', (request, response) => {
+    response.sendFile(addTaskHtml);
+})
+
+router.post('/addTask', (request, response) => {
+    const { nome, descricao, nivelDificuldade, nivelPrioridade } = request.body;
+    tasks.push({
+        nome: nome,
+        descricao: descricao,
+        nivelDificuldade: Number(nivelDificuldade),
+        nivelPrioridade: Number(nivelPrioridade)
+    })
+    response.sendFile(addTaskHtml);
+})
 
 
 module.exports = router;

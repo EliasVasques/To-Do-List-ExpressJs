@@ -4,21 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loja</title>
+    <title>Tarefas</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         .container {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-
-        .add-task {
-            display: block;
-            margin: auto;
-
-            margin: 30px 0;
         }
 
         .task {
@@ -89,19 +86,21 @@
                 </div>
             </div>
         </div>
+
         <button onclick="filtrar()">Filtrar</button>
         <button onclick="limparFiltros()">Limpar Filtros</button>
-
-        <input class="add-task" type="text">
+        <button onclick="renderizarAddTarefaHtml()">Add tarefa</button>
 
         <div class="tasks"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        
         let nivelDificuldadeFiltro;
         let nivelPrioridadeFiltro;
-        const urlGet = 'http://localhost:3001/tasks?';
+        const urlRaiz = 'http://localhost:3001/';
+        const urlGetTask = 'http://localhost:3001/tasks';
 
         const selecionar = (elemento) => {
             const classeFiltro = elemento.parentNode.parentNode.classList[0];
@@ -117,7 +116,7 @@
 
         const filtrar = () => {
 
-            let url = urlGet;
+            let url = urlGetTask + '?';
             if(nivelDificuldadeFiltro) url += `nivelDificuldade=${nivelDificuldadeFiltro}&`;
             if(nivelPrioridadeFiltro) url += `nivelPrioridade=${nivelPrioridadeFiltro}&`;
             renderizarTasks(url)
@@ -131,7 +130,7 @@
             }
 
             // renderizar sem filtros
-            renderizarTasks( urlGet );
+            renderizarTasks( urlGetTask );
         }
         
         const renderizarTasks = ( url ) => {
@@ -156,9 +155,13 @@
                 })
         }
 
+        const renderizarAddTarefaHtml = () => {
+            window.location = urlGetTask + '/addTask';
+        }
+
         // PRIMEIRA VEZ
         renderizarTasks('http://localhost:3001/tasks');
-
+        
     </script>
 </body>
 </html>
