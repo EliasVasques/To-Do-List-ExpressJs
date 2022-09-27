@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<%- include('./partes/head.ejs') %>
+
+<body>
+    <form action="/tarefas/deletar/<%= tarefa._id %>" method="POST">
+        <p>Tem certeza que deseja a pagar a tarefa <%= tarefa.nome %>?</p>
+        <button type="submit">Sim</button>
+        <a href="/tarefas">Não</a>
+    </form>
+</body>
+</html>

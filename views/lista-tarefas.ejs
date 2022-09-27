@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<%- include('./partes/head.ejs') %>
+
+<body>
+
+    
+    <div class="container-tarefas">
+        <h1>Tarefas</h1>
+
+        <h4>Filtros</h4>
+        <div class="filtro">
+            <div>
+                <h4>Nível de Dificuldade</h4>
+                <div class="opcoes nivel-dificuldade">
+                    <div onclick="selecionar(this)">1</div>
+                    <div onclick="selecionar(this)">2</div>
+                    <div onclick="selecionar(this)">3</div>
+                    <div onclick="selecionar(this)">4</div>
+                </div>
+            </div>
+            <div>
+                <h4>Nível de Prioridade</h4>
+                <div class="opcoes nivel-prioridade">
+                    <div onclick="selecionar(this)">1</div>
+                    <div onclick="selecionar(this)">2</div>
+                    <div onclick="selecionar(this)">3</div>
+                    <div onclick="selecionar(this)">4</div>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="filtrar()">Filtrar</button>
+        <a href="/tarefas">Limpar Filtros</a>
+        <a href="/tarefas/add">Add Tarefa</a>
+
+        <div class="tarefas">
+
+            <% for(let tarefa of tarefas) { %>
+                <div class="tarefa">
+                    <div class="nome"><%= tarefa.nome %></div>
+                    <div style="display: flex; align-items: center;">
+                        <div style="margin-right: 30px;">
+                            D: <%= tarefa.nivelDificuldade %> <br>
+                            P: <%= tarefa.nivelPrioridade %> <br>
+                        </div>
+                        <div>
+                            <a href="/tarefas/deletar/<%= tarefa._id %>" class="deletar">X</a>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+        </div>
+    </div>
+    
+    <script>
+        
+        let nivelDificuldadeFiltro;
+        let nivelPrioridadeFiltro;
+
+        const selecionar = (elemento) => {
+            const classeFiltro = elemento.parentNode.classList[1];
+
+            if(classeFiltro === 'nivel-dificuldade') nivelDificuldadeFiltro = elemento.innerHTML;
+            else if(classeFiltro === 'nivel-prioridade') nivelPrioridadeFiltro = elemento.innerHTML;
+
+            const anteriorClicado = document.querySelector(`.${classeFiltro} .selecionado`);
+            if(anteriorClicado) anteriorClicado.classList.remove('selecionado');
+
+            elemento.classList.add('selecionado');
+        }
+
+        const filtrar = () => {
+            let url = 'http://localhost:3001/tarefas?'
+            if(nivelDificuldadeFiltro) url += `nivelDificuldade=${nivelDificuldadeFiltro}&`
+            if(nivelPrioridadeFiltro) url += `nivelPrioridade=${nivelPrioridadeFiltro}&`
+            window.location = url
+        }
+        
+    </script>
+</body>
+</html>
